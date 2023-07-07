@@ -1,0 +1,251 @@
+; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+    INTEGER hFile
+    INTEGER rv
+    STRING  projname$
+    STRING  filename$
+    STRING  projpath$
+
+; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+  ; ---------------------
+  ; set the target folder
+  ; ---------------------
+    projpath$ = getfolder "Set your target folder" "Create your dialog template here"
+    if$ projpath$ = ""
+    end
+    chdir projpath$                     ; change to your target directory
+
+    msgbox "The default plugin name is cplugin.dll, change the name and you must change the code in CodeEdit.exe" "Information" MB_OK
+
+  ; --------------------
+  ; set the project name
+  ; --------------------
+    gettext "Type the project name with NO extension" "Do NOT use spaces in the name" "project"
+    if$ $0 = ""
+    end
+    projname$ = $0                      ; assign the gettext return string to a named variable string
+    filename$ = cat$ projname$ ".asm"   ; append the ASM extension to it
+
+; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+    hFile = fcreate filename$
+
+    rv = fprint hFile "; «»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»"
+    rv = fprint hFile ""
+    rv = fprint hFile "    include \masm64\include64\masm64rt.inc"
+    rv = fprint hFile ""
+    rv = fprint hFile "; «»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»"
+    rv = fprint hFile ""
+    rv = fprint hFile "  ; -------------------------------------------"
+    rv = fprint hFile "  ; Build this DLL with the provided MAKEIT.BAT"
+    rv = fprint hFile "  ; -------------------------------------------"
+    rv = fprint hFile ""
+    rv = fprint hFile "    .data?"
+    rv = fprint hFile "      hInstance   dq ?"
+    rv = fprint hFile "      hWnd        dq ?"
+    rv = fprint hFile "      hMenu       dq ?"
+    rv = fprint hFile "      hEdit       dq ?"
+    rv = fprint hFile "      hStatus     dq ?"
+    rv = fprint hFile "      hToolbar    dq ?"
+    rv = fprint hFile "      lpWndProc   dq ?                                              ; parent subclass address"
+    rv = fprint hFile ""
+    rv = fprint hFile "    .code"
+    rv = fprint hFile ""
+    rv = fprint hFile "; «»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»"
+    rv = fprint hFile ""
+    rv = fprint hFile "PluginEntryPoint proc instance:QWORD,reason:QWORD,unused:QWORD "
+    rv = fprint hFile ""
+    rv = fprint hFile "    .if reason == DLL_PROCESS_ATTACH"
+    rv = fprint hFile "      mrm hInstance, instance                                       ; copy stack arg to global"
+    rv = fprint hFile "      mov rax, TRUE                                                 ; return TRUE so DLL will start"
+    rv = fprint hFile "    .endif"
+    rv = fprint hFile ""
+    rv = fprint hFile "    ret"
+    rv = fprint hFile ""
+    rv = fprint hFile "PluginEntryPoint endp"
+    rv = fprint hFile ""
+    rv = fprint hFile "; «»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»"
+    rv = fprint hFile ""
+    rv = fprint hFile "piInterface proc hWin:QWORD,Menu:QWORD,Edit:QWORD,tbar:QWORD,sbar:QWORD"
+    rv = fprint hFile ""
+    rv = fprint hFile "  ; ------------------------------------"
+    rv = fprint hFile "  ; load arguments into GLOBAL variables"
+    rv = fprint hFile "  ; ------------------------------------"
+    rv = fprint hFile "    mrm hWnd,     hWin"
+    rv = fprint hFile "    mrm hMenu,    Menu"
+    rv = fprint hFile "    mrm hEdit,    Edit"
+    rv = fprint hFile "    mrm hToolbar, tbar"
+    rv = fprint hFile "    mrm hStatus,  sbar"
+    rv = fprint hFile ""
+    rv = fprint hFile "  ; -------------------------------------------------"
+    rv = fprint hFile "  ; subclass the parent window for message processing"
+    rv = fprint hFile "  ; -------------------------------------------------"
+    rv = fprint hFile "    invoke SetWindowLongPtr,hWnd,GWL_WNDPROC,ADDR WndProc"
+    rv = fprint hFile "    mov lpWndProc, rax"
+    rv = fprint hFile ""
+    rv = fprint hFile "    ret"
+    rv = fprint hFile ""
+    rv = fprint hFile "piInterface endp"
+    rv = fprint hFile ""
+    rv = fprint hFile "; «»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»"
+    rv = fprint hFile ""
+    rv = fprint hFile "; ----------------------------------------------------------------------"
+    rv = fprint hFile "; Message processing for the menu items by subclassing the parent window"
+    rv = fprint hFile "; ----------------------------------------------------------------------"
+    rv = fprint hFile ""
+    rv = fprint hFile "WndProc proc hWin:QWORD,uMsg:QWORD,wParam:QWORD,lParam:QWORD"
+    rv = fprint hFile ""
+    rv = fprint hFile "    .switch uMsg"
+    rv = fprint hFile "      .case WM_COMMAND"
+    rv = fprint hFile "        .switch wParam"
+    rv = fprint hFile "        ; ---------------------------------------------------"
+    rv = fprint hFile "        ; NOTE : The wParam number range should not duplicate"
+    rv = fprint hFile "        ;        any wParam numbers in the parent application"
+    rv = fprint hFile "        ;        Use a different number range to the parent"
+    rv = fprint hFile "        ; ---------------------------------------------------"
+    rv = fprint hFile "          .case 2000"
+    rv = fprintc hFile "            invoke MessageBox,hWnd,\qcplugin\q,\qTitle\q,MB_OK\r\n"
+    rv = fprint hFile ""
+    rv = fprint hFile "        .endsw"
+    rv = fprint hFile ""
+    rv = fprint hFile "      .case WM_DESTROY"
+    rv = fprint hFile "        rcall ExitProcess                                           ; ensure clean exit from DLL"
+    rv = fprint hFile ""
+    rv = fprint hFile "    .endsw"
+    rv = fprint hFile ""
+    rv = fprint hFile "    invoke CallWindowProc,lpWndProc,hWin,uMsg,wParam,lParam"
+    rv = fprint hFile ""
+    rv = fprint hFile "    ret"
+    rv = fprint hFile ""
+    rv = fprint hFile "WndProc endp"
+    rv = fprint hFile ""
+    rv = fprint hFile "; «»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»"
+    rv = fprint hFile ""
+    rv = fprint hFile "select_algo proc argnum:QWORD"
+    rv = fprint hFile "  ; --------------------------------------------------------------------------------------"
+    rv = fprint hFile "  ; this algo handles block selection before calling an algorithm to process the selection"
+    rv = fprint hFile "  ; --------------------------------------------------------------------------------------"
+    rv = fprint hFile "    LOCAL cr    :CHARRANGE                                          ; character range structure"
+    rv = fprint hFile "    LOCAL tlen  :QWORD                                              ; text length variable"
+    rv = fprint hFile "    LOCAL pMem  :QWORD                                              ; allocate memory pointer"
+    rv = fprint hFile ""
+    rv = fprint hFile "    rcall SendMessage,hEdit,EM_EXGETSEL,0,ptr$(cr)                  ; get the character range"
+    rv = fprint hFile ""
+    rv = fprint hFile "    mov eax, cr.cpMax                                               ; calculate selected text length"
+    rv = fprint hFile "    sub eax, cr.cpMin"
+    rv = fprint hFile "    mov tlen, rax"
+    rv = fprint hFile ""
+    rv = fprintc hFile "    mov pMem, alloc(tlen)                                           ; allocate \qtlen\q memory\r\n"
+    rv = fprint hFile "    rcall SendMessage,hEdit,EM_GETSELTEXT,0,pMem                    ; selection written to pMem"
+    rv = fprint hFile ""
+    rv = fprint hFile "  ; ------------------------------------"
+    rv = fprint hFile "  ; set up as many arguments as you need"
+    rv = fprint hFile "  ; ------------------------------------"
+    rv = fprint hFile "    .switch argnum"
+    rv = fprint hFile "      .case 0"
+    rv = fprint hFile "        rcall szUpper,pMem"
+    rv = fprint hFile "      .case 1"
+    rv = fprint hFile "        rcall szLower,pMem"
+    rv = fprint hFile " ;       .case 2"
+    rv = fprint hFile " ;       .case 3"
+    rv = fprint hFile " ;       .case 4"
+    rv = fprint hFile " ;       .case 5"
+    rv = fprint hFile "    .endsw"
+    rv = fprint hFile "  ; ------------------------------------"
+    rv = fprint hFile ""
+    rv = fprint hFile "    mov tlen, len(pMem)                                             ; some algos require the text length"
+    rv = fprint hFile ""
+    rv = fprint hFile "    rcall SendMessage,hEdit,EM_REPLACESEL,TRUE,tlen                 ; set the character range"
+    rv = fprint hFile "    rcall SendMessage,hEdit,EM_EXSETSEL,0,ptr$(cr)                  ; set selection to character range"
+    rv = fprint hFile ""
+    rv = fprint hFile "    mfree pMem                                                      ; release allocated memory"
+    rv = fprint hFile ""
+    rv = fprint hFile "    ret"
+    rv = fprint hFile ""
+    rv = fprint hFile " select_algo endp"
+    rv = fprint hFile ""
+    rv = fprint hFile "; «»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»"
+    rv = fprint hFile ""
+    rv = fprint hFile "    end"
+
+    rv = fclose hFile
+
+; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+    hFile = fcreate "deffile.def"
+
+    rv = fprint hFile "LIBRARY " projname$
+    rv = fprint hFile " EXPORTS piInterface"
+
+    rv = fclose hFile
+
+; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+  ; K:\asm64_tools\dlgmake\default\makeit.bat
+
+    hFile = fcreate "makeit.bat"
+
+    rv = fprint hFile "@echo off"
+    rv = fprint hFile ""
+
+    $0 = cat$ "set appname=" projname$
+    rv = fprint hFile $0
+
+    rv = fprint hFile ""
+    rv = fprint hFile "del %appname%.obj"
+    rv = fprint hFile "del %appname%.exe"
+    rv = fprint hFile ""
+    rv = fprint hFile "\masm64\bin64\porc64.exe rsrc.rc"
+    rv = fprint hFile ""
+    rv = fprint hFile "\masm64\bin64\ml64.exe /c /nologo %appname%.asm"
+    rv = fprint hFile ""
+    rv = fprint hFile "\masm64\bin64\Polink.exe /SUBSYSTEM:WINDOWS /ENTRY:PluginEntryPoint /DLL /DEF:deffile.def /nologo /LARGEADDRESSAWARE %appname%.obj rsrc.res"
+    rv = fprint hFile ""
+    rv = fprint hFile "del %appname%.obj"
+    rv = fprint hFile "del %appname%.exp"
+    rv = fprint hFile ""
+    rv = fprint hFile "dir %appname%.*"
+    rv = fprint hFile ""
+    rv = fprint hFile "pause"
+
+    rv = fclose hFile
+
+; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+    hFile = fcreate "rsrc.rc"
+
+    rv = fprint hFile ""
+    rv = fprintc hFile "#include \q/masm64/include64/resource.h\q\r\n"
+    rv = fprint hFile ""
+
+    rv = fprintc hFile "10 ICON \qicon.ico\q\r\n"
+
+    rv = fprint hFile ""
+
+    rv = fclose hFile
+
+; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+    hFile = fcreate "icon.ico"
+
+    rv = fhexout hFile "0000010001002020100001000400E802000016000000280000002000000040000000010004000000000000020000000000000000000000000000000000000000"
+    rv = fhexout hFile "000000008000008000000080800080000000800080008080000080808000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF000000"
+    rv = fhexout hFile "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    rv = fhexout hFile "000000CCCCCCCCCCCC0000000000000000000CCCCCCCCCCCCCC00000000000000000CCCCCCCCCCCCCCCC000000000000000CCCCCCCCCCCCCCCCCC00000000000"
+    rv = fhexout hFile "00CCCCCCCCCCCCCCCCCCCC00000000000CCCCCCCCCCC000CCCCCCCC000000000CCCCCCCCCCC8F80CCCCCCCCC00000000CCCCCCCCCCCFFF0CCCCCCCCC00000000"
+    rv = fhexout hFile "CCCCCCCCCCCFFF0CCCCCCCCC00000077CCCCCCCCCCCFFF0CCCCCCCCC77000077CCCCCCCCCCCFFF0CCCCCCCCC77000088CCCCCCCCCCCFFF0CCCCCCCCC88000088"
+    rv = fhexout hFile "CCCCCCCCCCCFFF0CCCCCCCCC8800008FCCCCCCCCCCCFFF0CCCCCCCCCF800008FCCCCCCCCCCCFFF0CCCCCCCCCF800008FCCCCCCCCCCC8F8CCCCCCCCCCF8000088"
+    rv = fhexout hFile "CCCCCCCCCCCCCCCCCCCCCCCC88000077CCCCCCCCCCCC000CCCCCCCCC770000000CCCCCCCCCCFFF0CCCCCCCC00000000000CCCCCCCCC8F8CCCCCCCC0000000000"
+    rv = fhexout hFile "000CCCCCCCCCCCCCCCCCC000000000000000CCCCCCCCCCCCCCCC00000000000000000CCCCCCCCCCCCCC0000000000000000000CCCCCCCCCCCC00000000000000"
+    rv = fhexout hFile "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000FFFF"
+    rv = fhexout hFile "FFFFFFFFFFFFFF8001FFFF0000FFFE00007FFC00003FF800001FF000000FE0000007C0000003C0000003C0000003C0000003C0000003C0000003C0000003C000"
+    rv = fhexout hFile "0003C0000003C0000003C0000003C0000003C0000003C0000003E0000007F000000FF800001FFC00003FFE00007FFF0000FFFF8001FFFFFFFFFFFFFFFFFF"
+
+    rv = fclose hFile
+
+; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+    run "makeit.bat"
+
+    end

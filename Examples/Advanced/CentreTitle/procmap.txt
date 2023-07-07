@@ -1,0 +1,9 @@
+
+; source file = ctitle.asm
+        ; Procedure name = entry_point
+        ; Procedure name = main
+        ; Procedure name = msgloop
+        ; Procedure name = WndProc
+        ; Procedure name = static_ttl
+        ; Procedure name = statusbar
+        ; Procedure name = tbutton

@@ -1,0 +1,10 @@
+
+; source file = MasmDesk.asm
+        ; Procedure name = entry_point
+        ; Procedure name = main
+        ; Procedure name = msgloop
+        ; Procedure name = WndProc
+        ; Procedure name = LoadINI
+        ; Procedure name = split_line
+        ; Procedure name = process_user_menu
+        ; Procedure name = run_menu_choice

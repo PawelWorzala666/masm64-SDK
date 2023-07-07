@@ -1,0 +1,156 @@
+; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+    INTEGER hFile
+    INTEGER rv
+    STRING  projname$
+    STRING  filename$
+    STRING  projpath$
+
+; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+  ; ---------------------
+  ; set the target folder
+  ; ---------------------
+    projpath$ = getfolder "Set your target folder" "Create your dialog template here"
+    if$ projpath$ = ""
+    end
+    chdir projpath$                     ; change to your target directory
+
+  ; --------------------
+  ; set the project name
+  ; --------------------
+    gettext "Type the plugin name with NO extension" "Do NOT use spaces in the name" "plugin"
+    if$ $0 = ""
+    end
+    projname$ = $0                      ; assign the gettext return string to a named variable string
+    filename$ = cat$ projname$ ".asm"   ; append the ASM extension to it
+
+; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+    hFile = fcreate filename$
+
+    rv = fprint hFile "; «»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»"
+    rv = fprint hFile ""
+    rv = fprint hFile "    include \masm64\include64\masm64rt.inc"
+    rv = fprint hFile ""
+    rv = fprint hFile "; «»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»"
+    rv = fprint hFile ""
+    rv = fprint hFile "  ; -------------------------------------------"
+    rv = fprint hFile "  ; Build this DLL with the provided MAKEIT.BAT"
+    rv = fprint hFile "  ; -------------------------------------------"
+    rv = fprint hFile ""
+    rv = fprint hFile "    .data?"
+    rv = fprint hFile "      hInstance   dq ?"
+    rv = fprint hFile "      hWnd        dq ?"
+    rv = fprint hFile "      hMenu       dq ?"
+    rv = fprint hFile "      hEdit       dq ?"
+    rv = fprint hFile "      hStatus     dq ?"
+    rv = fprint hFile "      hToolbar    dq ?"
+    rv = fprint hFile ""
+    rv = fprint hFile "    .code"
+    rv = fprint hFile ""
+    rv = fprint hFile "; «»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»"
+    rv = fprint hFile ""
+    rv = fprint hFile "PluginEntryPoint proc instance:QWORD,reason:QWORD,unused:QWORD "
+    rv = fprint hFile ""
+    rv = fprint hFile "    .if reason == DLL_PROCESS_ATTACH"
+    rv = fprint hFile "      mrm hInstance, instance                                       ; copy stack arg to global"
+    rv = fprint hFile "      mov rax, TRUE                                                 ; return TRUE so DLL will start"
+    rv = fprint hFile "    .endif"
+    rv = fprint hFile ""
+    rv = fprint hFile "    ret"
+    rv = fprint hFile ""
+    rv = fprint hFile "PluginEntryPoint endp"
+    rv = fprint hFile ""
+    rv = fprint hFile "; «»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»"
+    rv = fprint hFile ""
+    rv = fprint hFile "piInterface proc hWin:QWORD,Menu:QWORD,Edit:QWORD,tbar:QWORD,sbar:QWORD"
+    rv = fprint hFile ""
+    rv = fprint hFile "  ; ------------------------------------"
+    rv = fprint hFile "  ; load arguments into GLOBAL variables"
+    rv = fprint hFile "  ; ------------------------------------"
+    rv = fprint hFile "    mrm hWnd,     hWin"
+    rv = fprint hFile "    mrm hMenu,    Menu"
+    rv = fprint hFile "    mrm hEdit,    Edit"
+    rv = fprint hFile "    mrm hToolbar, tbar"
+    rv = fprint hFile "    mrm hStatus,  sbar"
+    rv = fprint hFile ""
+    rv = fprint hFile "  ; |||||||||||||||||||||||||||||||||||||||||||||"
+    rv = fprint hFile ""
+    rv = fprint hFile "  ; start any procedure, dialog or algorithm from"
+    rv = fprint hFile "  ; here with full access to the editor's handles"
+    rv = fprint hFile ""
+    rv = fprint hFile "  ; |||||||||||||||||||||||||||||||||||||||||||||"
+    rv = fprint hFile ""
+    rv = fprint hFile "    ret"
+    rv = fprint hFile ""
+    rv = fprint hFile "piInterface endp"
+    rv = fprint hFile ""
+    rv = fprint hFile "; «»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»«»"
+    rv = fprint hFile ""
+    rv = fprint hFile "    end"
+
+    rv = fclose hFile
+
+; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+    hFile = fcreate "deffile.def"
+
+    rv = fprint hFile "LIBRARY " projname$
+    rv = fprint hFile " EXPORTS piInterface"
+
+    rv = fclose hFile
+
+; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+  ; K:\asm64_tools\dlgmake\default\makeit.bat
+
+    hFile = fcreate "makeit.bat"
+
+    rv = fprint hFile "@echo off"
+    rv = fprint hFile ""
+
+    $0 = cat$ "set appname=" projname$
+    rv = fprint hFile $0
+
+    rv = fprint hFile ""
+    rv = fprint hFile "del %appname%.obj"
+    rv = fprint hFile "del %appname%.exe"
+    rv = fprint hFile ""
+    rv = fprint hFile "\masm64\bin64\porc64.exe rsrc.rc"
+    rv = fprint hFile ""
+    rv = fprint hFile "\masm64\bin64\ml64.exe /c /nologo %appname%.asm"
+    rv = fprint hFile ""
+    rv = fprint hFile ":: -------------------------"
+    rv = fprint hFile ":: with or without resources"
+    rv = fprint hFile ":: -------------------------"
+    rv = fprint hFile "\masm64\bin64\Polink.exe /SUBSYSTEM:WINDOWS /ENTRY:PluginEntryPoint /DLL /DEF:deffile.def /nologo /LARGEADDRESSAWARE %appname%.obj"
+    rv = fprint hFile ""
+    rv = fprint hFile ":: \masm64\bin64\Polink.exe /SUBSYSTEM:WINDOWS /ENTRY:PluginEntryPoint /DLL /DEF:deffile.def /nologo /LARGEADDRESSAWARE %appname%.obj rsrc.res"
+    rv = fprint hFile ""
+    rv = fprint hFile "del %appname%.obj"
+    rv = fprint hFile "del %appname%.exp"
+    rv = fprint hFile ""
+    rv = fprint hFile "dir %appname%.*"
+    rv = fprint hFile ""
+    rv = fprint hFile "pause"
+
+    rv = fclose hFile
+
+; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+    hFile = fcreate "rsrc.rc"
+
+    rv = fprint hFile ""
+    rv = fprintc hFile "#include \q/masm64/include64/resource.h\q\r\n"
+    rv = fprint hFile ""
+
+    rv = fprint hFile ""
+
+    rv = fclose hFile
+
+; ||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+    run "makeit.bat"
+
+    end

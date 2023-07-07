@@ -1,0 +1,5 @@
+
+; source file = threads.asm
+        ; Procedure name = entry_point
+        ; Procedure name = callthread
+        ; Procedure name = threadproc

@@ -1,0 +1,9 @@
+
+; source file = memstat2.asm
+        ; Procedure name = entry_point
+        ; Procedure name = main
+        ; Procedure name = msgloop
+        ; Procedure name = WndProc
+        ; Procedure name = static_control
+        ; Procedure name = push_button
+        ; Procedure name = Thread

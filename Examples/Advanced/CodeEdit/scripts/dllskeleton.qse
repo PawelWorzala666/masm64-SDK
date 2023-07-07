@@ -1,0 +1,153 @@
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+    INTEGER hFile
+    INTEGER rv
+    STRING  projname$
+    STRING  filename$
+    STRING  projpath$
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+  ; ---------------------
+  ; set the target folder
+  ; ---------------------
+    projpath$ = getfolder "Set your target folder" "Create your DLL template here"
+    if$ projpath$ = ""
+    end
+    chdir projpath$                     ; change to your target directory
+
+  ; --------------------
+  ; set the project name
+  ; --------------------
+    gettext "Type the project name with NO extension" "Do NOT use spaces in the name" "project"
+    if$ $0 = ""
+    end
+    projname$ = $0                      ; assign the gettext return string to a named variable string
+    filename$ = cat$ projname$ ".asm"   ; append the ASM extension to it
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+  ; K:\asm64\script4dll\makeit.bat
+
+    hFile = fcreate "makeit.bat"
+
+    rv = fprint hFile "@echo off"
+
+    $0 = cat$ "set appname=" projname$
+    rv = fprint hFile $0
+
+    rv = fprint hFile "if exist %1.obj del %appname%.obj"
+    rv = fprint hFile "if exist %1.exe del %appname%.dll"
+    rv = fprint hFile "\masm64\bin64\ml64 /c %appname%.asm"
+    rv = fprint hFile "\masm64\bin64\link /SUBSYSTEM:WINDOWS /entry:LibMain /DLL /DEF:%appname%.def %appname%.obj "
+    rv = fprint hFile "del %appname%.obj"
+    rv = fprint hFile "del %appname%.exp"
+    rv = fprint hFile "dir %appname%.*"
+    rv = fprint hFile "pause"
+
+    rv = fclose hFile
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+  ; K:\asm64\script4dll\refdll.asm
+
+    hFile = fcreate filename$
+
+    rv = fprint hFile "; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい"
+    rv = fprint hFile ""
+    rv = fprint hFile "    include \masm64\include64\masm64rt.inc"
+    rv = fprint hFile ""
+    rv = fprint hFile "; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい"
+    rv = fprint hFile ""
+    rv = fprint hFile "    ; -------------------------------------------"
+    rv = fprint hFile "    ; Build this DLL with the provided MAKEIT.BAT"
+    rv = fprint hFile "    ; -------------------------------------------"
+    rv = fprint hFile ""
+    rv = fprint hFile "      .data?"
+    rv = fprint hFile "        DLLinstance dq ?"
+    rv = fprint hFile ""
+    rv = fprint hFile "      .code"
+    rv = fprint hFile ""
+    rv = fprint hFile "; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい"
+    rv = fprint hFile ""
+    rv = fprint hFile "LibMain proc instance:QWORD,reason:QWORD,unused:QWORD "
+    rv = fprint hFile ""
+    rv = fprint hFile "    .if reason == DLL_PROCESS_ATTACH"
+    rv = fprint hFile "      mrm DLLinstance, instance             ; copy local to global"
+    rv = fprint hFile "      mov rax, TRUE                         ; return TRUE so DLL will start"
+    rv = fprint hFile ""
+    rv = fprint hFile "    .elseif reason == DLL_PROCESS_DETACH"
+    rv = fprint hFile ""
+    rv = fprint hFile "    .elseif reason == DLL_THREAD_ATTACH"
+    rv = fprint hFile ""
+    rv = fprint hFile "    .elseif reason == DLL_THREAD_DETACH"
+    rv = fprint hFile ""
+    rv = fprint hFile "    .endif"
+    rv = fprint hFile ""
+    rv = fprint hFile "    ret"
+    rv = fprint hFile ""
+    rv = fprint hFile "LibMain endp"
+    rv = fprint hFile ""
+    rv = fprint hFile "; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい"
+    rv = fprint hFile ""
+    rv = fprint hFile "  comment * -------------------------------------------------------"
+    rv = fprint hFile ""
+    rv = fprint hFile "          You should add the procedures your DLL requires AFTER the"
+    rv = fprint hFile "          LibMain procedure. For each procedure that you wish to"
+    rv = fprint hFile "          EXPORT you must place its name in the DEF file so that the"
+    rv = fprint hFile "          linker will know which procedures to put in the EXPORT"
+    rv = fprint hFile "          table in the DLL. Use the following syntax AFTER the"
+    rv = fprint hFile "          LIBRARY name on the 1st line."
+    rv = fprint hFile ""
+    rv = fprint hFile "          LIBRARY DLLname               ; the name of the DLL you are creating"
+    rv = fprint hFile "            EXPORTS YourProcName        ; the name of EACH proc you EXPORT"
+    rv = fprint hFile "            EXPORTS Any other proc      ; you declare each proc you EXPORT"
+    rv = fprint hFile ""
+    rv = fprint hFile "          A library file will be created with the same name as the dll."
+    rv = fprintc hFile "          If you are going to use \qincludelib\q then you will need to link\r\n"
+    rv = fprint hFile "          this library into the calling application. You will also need to"
+    rv = fprint hFile "          create a prototype for each exported procedure you call. They"
+    rv = fprint hFile "          occure in this form."
+    rv = fprint hFile ""
+    rv = fprint hFile "          EXTERNDEF YourProcName:PROC"
+    rv = fprint hFile ""
+    rv = fprint hFile "          ------------------------------------------------------- *"
+    rv = fprint hFile ""
+    rv = fprint hFile "; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい"
+    rv = fprint hFile ""
+    rv = fprint hFile "TestMsgBox proc hndl:QWORD,text:QWORD,titl:QWORD,mbstyle:QWORD"
+    rv = fprint hFile ""
+    rv = fprint hFile "    fn MessageBox,hndl,text,titl,mbstyle"
+    rv = fprint hFile "  ; ----------------------"
+    rv = fprint hFile "  ; return value is in RAX"
+    rv = fprint hFile "  ; ----------------------"
+    rv = fprint hFile "    ret"
+    rv = fprint hFile ""
+    rv = fprint hFile "TestMsgBox endp"
+    rv = fprint hFile ""
+    rv = fprint hFile "; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい"
+    rv = fprint hFile ""
+    rv = fprint hFile "    end"
+    rv = fprint hFile ""
+
+    rv = fclose hFile
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+  ; K:\asm64\script4dll\refdll.def
+
+    $0 = cat$ projname$ ".def"
+    hFile = fcreate $0
+
+    $0 = cat$ "LIBRARY " projname$
+    rv = fprint hFile $0
+
+    rv = fprint hFile " EXPORTS TestMsgBox"
+
+    rv = fclose hFile
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+    run "makeit.bat"
+
+    end

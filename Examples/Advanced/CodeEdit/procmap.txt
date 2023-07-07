@@ -1,0 +1,45 @@
+
+; source file = about.asm
+        ; Procedure name = AboutDlg
+
+; source file = CodeEdit.asm
+        ; Procedure name = entry_point
+        ; Procedure name = main
+        ; Procedure name = msgloop
+        ; Procedure name = WndProc
+        ; Procedure name = confirmation
+        ; Procedure name = merge_text
+        ; Procedure name = je
+        ; Procedure name = char_fill
+
+; source file = findrepl.asm
+        ; Procedure name = replace_text
+        ; Procedure name = FndEdProc1
+        ; Procedure name = RepEdProc
+        ; Procedure name = find_text
+        ; Procedure name = FndEdProc
+        ; Procedure name = TextFind
+
+; source file = indent.asm
+        ; Procedure name = add_indent
+        ; Procedure name = sub_indent
+        ; Procedure name = autoindent
+        ; Procedure name = get_current_line_index_ex
+        ; Procedure name = blank_count_ex
+        ; Procedure name = get_current_column
+
+; source file = riched.asm
+        ; Procedure name = rich_edit
+        ; Procedure name = EditProc
+        ; Procedure name = Do_Tabs
+        ; Procedure name = get_word
+        ; Procedure name = get_current_line_index
+        ; Procedure name = set_text_colour
+        ; Procedure name = set_edit_colours
+        ; Procedure name = blank_count
+
+; source file = toolbar.asm
+        ; Procedure name = TBcreate
+        ; Procedure name = StatusBar
+        ; Procedure name = rebar
+        ; Procedure name = addband

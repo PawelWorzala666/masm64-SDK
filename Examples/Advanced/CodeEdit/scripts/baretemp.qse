@@ -1,0 +1,366 @@
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+    INTEGER hFile
+    INTEGER rv
+    STRING  projname$
+    STRING  filename$
+    STRING  projpath$
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+  ; ---------------------
+  ; set the target folder
+  ; ---------------------
+    projpath$ = getfolder "Set or create a target folder" "Create your basic window here"
+    if$ projpath$ = ""
+    end
+    chdir projpath$                     ; change to your target directory
+
+  ; --------------------
+  ; set the project name
+  ; --------------------
+    gettext "Type the project name with NO extension" "Do NOT use spaces in the name" "project"
+    if$ $0 = ""
+    end
+    projname$ = $0                      ; assign the gettext return string to a named variable string
+    filename$ = cat$ projname$ ".asm"   ; append the ASM extension to it
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+  ; K:\asm64\bare_template\makeit.bat
+
+    hFile = fcreate "makeit.bat"
+
+    rv = fprint hFile "@echo off"
+    rv = fprint hFile ""
+
+    $0 = cat$ "set appname=" projname$
+    rv = fprint hFile $0
+
+    rv = fprint hFile ""
+    rv = fprint hFile "if exist %1.obj del %appname%.obj"
+    rv = fprint hFile "if exist %1.exe del %appname%.exe"
+    rv = fprint hFile ""
+    rv = fprint hFile "\masm64\bin64\rc.exe rsrc.rc"
+    rv = fprint hFile ""
+    rv = fprint hFile "\masm64\bin64\ml64.exe /c /nologo %appname%.asm"
+    rv = fprint hFile ""
+    rv = fprint hFile "\masm64\bin64\link.exe /SUBSYSTEM:WINDOWS /ENTRY:entry_point /LARGEADDRESSAWARE %appname%.obj rsrc.res"
+    rv = fprint hFile ""
+    rv = fprint hFile "dir %appname%.*"
+    rv = fprint hFile ""
+    rv = fprint hFile "pause"
+
+    rv = fclose hFile
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+  ; K:\asm64\bare_template\manifest.xml
+
+    hFile = fcreate "manifest.xml"
+
+    rv = fprintc hFile "<?xml version=\q1.0\q encoding=\qUTF-8\q standalone=\qyes\q?><assembly xmlns=\qurn:schemas-microsoft-com:asm.v1\q manifestVersion=\q1.0\q>\r\n"
+    rv = fprint hFile "<assemblyIdentity "
+    rv = fprintc hFile "version=\q1.0.0.0\q \r\n"
+    rv = fprintc hFile "processorArchitecture=\qamd64\q \r\n"
+    rv = fprintc hFile "name=\qMASM32.Text Editor.TheGun\q \r\n"
+    rv = fprintc hFile "type=\qwin32\q \r\n"
+    rv = fprint hFile "/> "
+    rv = fprint hFile "<description>Your application description here.</description> "
+    rv = fprint hFile "<dependency> "
+    rv = fprint hFile "<dependentAssembly> "
+    rv = fprint hFile "<assemblyIdentity "
+    rv = fprintc hFile "type=\qwin32\q \r\n"
+    rv = fprintc hFile "name=\qMicrosoft.Windows.Common-Controls\q \r\n"
+    rv = fprintc hFile "version=\q6.0.0.0\q \r\n"
+    rv = fprintc hFile "processorArchitecture=\qamd64\q \r\n"
+    rv = fprintc hFile "publicKeyToken=\q6595b64144ccf1df\q \r\n"
+    rv = fprintc hFile "language=\q*\q \r\n"
+    rv = fprint hFile "/> "
+    rv = fprint hFile "</dependentAssembly> "
+    rv = fprint hFile "</dependency> </assembly>"
+
+    rv = fclose hFile
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+  ; K:\asm64\bare_template\rsrc.rc
+
+    hFile = fcreate "rsrc.rc"
+
+    rv = fprint hFile "// *************************************************************************************************"
+    rv = fprint hFile ""
+    rv = fprintc hFile "#include \q\\masm64\\include64\\resource.h\q\r\n"
+    rv = fprint hFile ""
+    rv = fprint hFile "// *************************************************************************************************"
+    rv = fprint hFile ""
+    rv = fprintc hFile "1 24 \qmanifest.xml\q    // manifest file\r\n"
+    rv = fprint hFile ""
+    rv = fprintc hFile "10 ICON MOVEABLE PURE LOADONCALL DISCARDABLE \qicon.ico\q\r\n"
+    rv = fprint hFile ""
+    rv = fprint hFile "100	MENUEX MOVEABLE IMPURE LOADONCALL DISCARDABLE"
+    rv = fprint hFile "BEGIN"
+    rv = fprintc hFile "    POPUP \q&File\q, , , 0\r\n"
+    rv = fprint hFile "    BEGIN"
+    rv = fprintc hFile "        MENUITEM \q&Exit\q, 200\r\n"
+    rv = fprint hFile "    END"
+    rv = fprint hFile ""
+    rv = fprintc hFile "    POPUP \q&Help\q, , , 0\r\n"
+    rv = fprint hFile "    BEGIN"
+    rv = fprintc hFile "        MENUITEM \q&About\q, 300\r\n"
+    rv = fprint hFile "    END"
+    rv = fprint hFile "END"
+    rv = fprint hFile ""
+    rv = fprint hFile "// *************************************************************************************************"
+    rv = fprint hFile ""
+    rv = fprint hFile "VS_VERSION_INFO VERSIONINFO"
+    rv = fprint hFile "FILEVERSION 1, 0, 0, 0"
+    rv = fprint hFile "PRODUCTVERSION 1, 0, 0, 0"
+    rv = fprint hFile "FILEOS VOS__WINDOWS32"
+    rv = fprint hFile "FILETYPE VFT_APP"
+    rv = fprint hFile "BEGIN"
+    rv = fprintc hFile "  BLOCK \qStringFileInfo\q\r\n"
+    rv = fprint hFile "  BEGIN"
+    rv = fprintc hFile "    BLOCK \q040904B0\q\r\n"
+    rv = fprint hFile "    BEGIN"
+    rv = fprintc hFile "      VALUE \qCompanyName\q,      \qThe MASM32 SDK\\000\q\r\n"
+    rv = fprintc hFile "      VALUE \qFileDescription\q,  \qDefault Template\\000\q\r\n"
+    rv = fprintc hFile "      VALUE \qFileVersion\q,      \q1.0\\000\q\r\n"
+    rv = fprintc hFile "      VALUE \qInternalName\q,     \qtemplate\\000\q\r\n"
+    rv = fprintc hFile "      VALUE \qOriginalFilename\q, \qtemplate.exe\\000\q\r\n"
+    rv = fprintc hFile "      VALUE \qLegalCopyright\q,   \q\\251 2016 The MASM32 SDK\\000\q\r\n"
+    rv = fprintc hFile "      VALUE \qProductName\q,      \qtemplate\\000\q\r\n"
+    rv = fprintc hFile "      VALUE \qProductVersion\q,   \q1.0\\000\q\r\n"
+    rv = fprint hFile "    END"
+    rv = fprint hFile "  END"
+    rv = fprintc hFile "  BLOCK \qVarFileInfo\q\r\n"
+    rv = fprint hFile "  BEGIN"
+    rv = fprintc hFile "    VALUE \qTranslation\q, 0x409, 0x4B0\r\n"
+    rv = fprint hFile "  END"
+    rv = fprint hFile "END"
+    rv = fprint hFile ""
+    rv = fprint hFile "// *************************************************************************************************"
+
+    rv = fclose hFile
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+  ; K:\asm64\bare_template\template.asm
+
+    hFile = fcreate filename$
+
+    rv = fprint hFile "; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい"
+    rv = fprint hFile ""
+    rv = fprint hFile "    include \masm64\include64\masm64rt.inc"
+    rv = fprint hFile ""
+    rv = fprint hFile "    .data?"
+    rv = fprint hFile "      hInstance dq ?"
+    rv = fprint hFile "      hWnd      dq ?"
+    rv = fprint hFile "      hIcon     dq ?"
+    rv = fprint hFile "      hCursor   dq ?"
+    rv = fprint hFile "      sWid      dq ?"
+    rv = fprint hFile "      sHgt      dq ?"
+    rv = fprint hFile "      hBrush    dq ?"
+    rv = fprint hFile ""
+    rv = fprint hFile "    .data"
+    rv = fprintc hFile "      classname db \qtemplate_class\q,0\r\n"
+    rv = fprintc hFile "      caption db \qTemplate\q,0\r\n"
+    rv = fprint hFile ""
+    rv = fprint hFile "    .code"
+    rv = fprint hFile ""
+    rv = fprint hFile "; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい"
+    rv = fprint hFile ""
+    rv = fprint hFile "entry_point proc"
+    rv = fprint hFile ""
+    rv = fprint hFile "    GdiPlusBegin                    ; initialise GDIPlus"
+    rv = fprint hFile ""
+    rv = fprint hFile "    ics equ <32>                    ; icon size"
+    rv = fprint hFile ""
+    rv = fprint hFile "    mov hInstance, rvcall(GetModuleHandle,0)"
+    rv = fprint hFile "    mov hIcon,     rv(LoadImage,hInstance,10,IMAGE_ICON,ics,ics,LR_DEFAULTCOLOR)"
+    rv = fprint hFile "    mov hCursor,   rvcall(LoadCursor,0,IDC_ARROW)"
+    rv = fprint hFile "    mov sWid,      rvcall(GetSystemMetrics,SM_CXSCREEN)"
+    rv = fprint hFile "    mov sHgt,      rvcall(GetSystemMetrics,SM_CYSCREEN)"
+    rv = fprint hFile "    mov hBrush,    rvcall(CreateSolidBrush,00444444h)"
+    rv = fprint hFile ""
+    rv = fprint hFile "    call main"
+    rv = fprint hFile ""
+    rv = fprint hFile "    GdiPlusEnd                      ; GdiPlus cleanup"
+    rv = fprint hFile ""
+    rv = fprint hFile "    rcall ExitProcess,0"
+    rv = fprint hFile ""
+    rv = fprint hFile "    ret"
+    rv = fprint hFile ""
+    rv = fprint hFile "entry_point endp"
+    rv = fprint hFile ""
+    rv = fprint hFile "; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい"
+    rv = fprint hFile ""
+    rv = fprint hFile "main proc"
+    rv = fprint hFile ""
+    rv = fprint hFile "    LOCAL wc      :WNDCLASSEX"
+    rv = fprint hFile "    LOCAL lft     :QWORD"
+    rv = fprint hFile "    LOCAL top     :QWORD"
+    rv = fprint hFile "    LOCAL wid     :QWORD"
+    rv = fprint hFile "    LOCAL hgt     :QWORD"
+    rv = fprint hFile ""
+    rv = fprint hFile "    mov wc.cbSize,         SIZEOF WNDCLASSEX"
+    rv = fprint hFile "    mov wc.style,          CS_BYTEALIGNCLIENT or CS_BYTEALIGNWINDOW"
+    rv = fprint hFile "    mov wc.lpfnWndProc,    ptr$(WndProc)"
+    rv = fprint hFile "    mov wc.cbClsExtra,     0"
+    rv = fprint hFile "    mov wc.cbWndExtra,     0"
+    rv = fprint hFile "    mrm wc.hInstance,      hInstance"
+    rv = fprint hFile "    mrm wc.hIcon,          hIcon"
+    rv = fprint hFile "    mrm wc.hCursor,        hCursor"
+    rv = fprint hFile "    mrm wc.hbrBackground,  hBrush"
+    rv = fprint hFile "    mov wc.lpszMenuName,   0"
+    rv = fprint hFile "    mov wc.lpszClassName,  ptr$(classname)"
+    rv = fprint hFile "    mrm wc.hIconSm,        hIcon"
+    rv = fprint hFile ""
+    rv = fprint hFile "    rcall RegisterClassEx,ptr$(wc)"
+    rv = fprint hFile ""
+    rv = fprint hFile "    mov wid, rvcall(getpercent,sWid,65)     ; 65% screen width"
+    rv = fprint hFile "    mov hgt, rvcall(getpercent,sHgt,65)     ; 65% screen height"
+    rv = fprint hFile ""
+    rv = fprint hFile "    rcall aspect_ratio,hgt,45               ; height + 45%"
+    rv = fprint hFile "    cmp wid, rax                            ; if wid > rax"
+    rv = fprint hFile "    jle @F"
+    rv = fprint hFile "    mov wid, rax                            ; set wid to rax"
+    rv = fprint hFile "  @@:"
+    rv = fprint hFile "    mov rax, sWid                           ; calculate offset from left side"
+    rv = fprint hFile "    sub rax, wid"
+    rv = fprint hFile "    shr rax, 1"
+    rv = fprint hFile "    mov lft, rax"
+    rv = fprint hFile ""
+    rv = fprint hFile "    mov rax, sHgt                           ; calculate offset from top edge"
+    rv = fprint hFile "    sub rax, hgt"
+    rv = fprint hFile "    shr rax, 1"
+    rv = fprint hFile "    mov top, rax"
+    rv = fprint hFile ""
+    rv = fprint hFile "  ; ---------------------------------"
+    rv = fprint hFile "  ; centre window at calculated sizes"
+    rv = fprint hFile "  ; ---------------------------------"
+    rv = fprint hFile "    invoke CreateWindowEx,WS_EX_LEFT or WS_EX_ACCEPTFILES, \"
+    rv = fprint hFile "                          ADDR classname,ADDR caption, \"
+    rv = fprint hFile "                          WS_OVERLAPPEDWINDOW or WS_VISIBLE,\"
+    rv = fprint hFile "                          lft,top,wid,hgt,0,0,hInstance,0"
+    rv = fprint hFile "    mov hWnd, rax"
+    rv = fprint hFile ""
+    rv = fprint hFile "    call msgloop"
+    rv = fprint hFile ""
+    rv = fprint hFile "    ret"
+    rv = fprint hFile ""
+    rv = fprint hFile "main endp"
+    rv = fprint hFile ""
+    rv = fprint hFile "; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい"
+    rv = fprint hFile ""
+    rv = fprint hFile "msgloop proc"
+    rv = fprint hFile ""
+    rv = fprint hFile "    LOCAL msg    :MSG"
+    rv = fprint hFile "    LOCAL pmsg   :QWORD"
+    rv = fprint hFile ""
+    rv = fprint hFile "    mov pmsg, ptr$(msg)                     ; get the msg structure address"
+    rv = fprint hFile "    jmp gmsg                                ; jump directly to GetMessage()"
+    rv = fprint hFile ""
+    rv = fprint hFile "  mloop:"
+    rv = fprint hFile "    rcall TranslateMessage,pmsg"
+    rv = fprint hFile "    rcall DispatchMessage,pmsg"
+    rv = fprint hFile "  gmsg:"
+    rv = fprint hFile "    test rax, rvcall(GetMessage,pmsg,0,0,0) ; loop until GetMessage returns zero"
+    rv = fprint hFile "    jnz mloop"
+    rv = fprint hFile ""
+    rv = fprint hFile "    ret"
+    rv = fprint hFile ""
+    rv = fprint hFile "msgloop endp"
+    rv = fprint hFile ""
+    rv = fprint hFile "; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい"
+    rv = fprint hFile ""
+    rv = fprint hFile "WndProc proc hWin:QWORD,uMsg:QWORD,wParam:QWORD,lParam:QWORD"
+    rv = fprint hFile ""
+    rv = fprint hFile "    LOCAL hDC :QWORD"
+    rv = fprint hFile "    LOCAL ps  :PAINTSTRUCT"
+    rv = fprint hFile "    LOCAL dfbuff[260]:BYTE"
+    rv = fprint hFile ""
+    rv = fprint hFile "    .switch uMsg"
+    rv = fprint hFile "      .case WM_COMMAND"
+    rv = fprint hFile "        .switch wParam"
+    rv = fprint hFile "          .case 200"
+    rv = fprint hFile "            rcall SendMessage,hWin,WM_SYSCOMMAND,SC_CLOSE,NULL"
+    rv = fprint hFile "          .case 300"
+    rv = fprint hFile "            invoke MsgboxI,hWin, \"
+    rv = fprintc hFile "                   \qWickedly Crafted In 64 Bit Microsoft Assembler <MASM>\q, \\\r\n"
+    rv = fprintc hFile "                   \qAbout\q,MB_OK,10\r\n"
+    rv = fprint hFile "        .endsw"
+    rv = fprint hFile ""
+    rv = fprint hFile "      .case WM_CREATE"
+    rv = fprint hFile "        rcall LoadMenu,hInstance,100"
+    rv = fprint hFile "        rcall SetMenu,hWin,rax"
+    rv = fprint hFile "        .return 0"
+    rv = fprint hFile ""
+    rv = fprint hFile "      .case WM_PAINT"
+    rv = fprint hFile "        rcall BeginPaint,hWin,ptr$(ps)"
+    rv = fprint hFile "        mov hDC, rvcall(GetDC,hWin)"
+    rv = fprint hFile ""
+    rv = fprint hFile "      ; code here"
+    rv = fprint hFile ""
+    rv = fprint hFile "        rcall ReleaseDC,hWin,hDC"
+    rv = fprint hFile "        rcall EndPaint,hWin,ptr$(ps)"
+    rv = fprint hFile ""
+    rv = fprint hFile "      .case WM_DROPFILES"
+    rv = fprint hFile "        rcall DragQueryFile,wParam,0,ptr$(dfbuff),260"
+    rv = fprintc hFile "        invoke MsgboxI,hWin,ADDR dfbuff,\qDrop File Name\q,MB_OK,10\r\n"
+    rv = fprint hFile ""
+    rv = fprint hFile "      .case WM_CLOSE"
+    rv = fprint hFile "        rcall SendMessage,hWin,WM_DESTROY,0,0"
+    rv = fprint hFile ""
+    rv = fprint hFile "      .case WM_DESTROY"
+    rv = fprint hFile "        rcall PostQuitMessage,NULL"
+    rv = fprint hFile ""
+    rv = fprint hFile "    .endsw"
+    rv = fprint hFile ""
+    rv = fprint hFile "    rcall DefWindowProc,hWin,uMsg,wParam,lParam"
+    rv = fprint hFile ""
+    rv = fprint hFile "    ret"
+    rv = fprint hFile ""
+    rv = fprint hFile "WndProc endp"
+    rv = fprint hFile ""
+    rv = fprint hFile "; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい"
+    rv = fprint hFile ""
+    rv = fprint hFile "    end"
+
+    rv = fclose hFile
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+    hFile = fcreate "icon.ico"
+
+rv = fhexout hFile "0000010001002020100001000400E802000016000000280000002000000040000000010004000000000000020000000000000000000000000000000000000000"
+rv = fhexout hFile "000000008000008000000080800080000000800080008080000080808000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF000000"
+rv = fhexout hFile "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+rv = fhexout hFile "000000CCCCCCCCCCCC0000000000000000000CCCCCCCCCCCCCC00000000000000000CCCCCCCCCCCCCCCC000000000000000CCCCCCCCCCCCCCCCCC00000000000"
+rv = fhexout hFile "00CCCCCCCCCCCCCCCCCCCC00000000000CCCCCCCCCCC000CCCCCCCC000000000CCCCCCCCCCC8F80CCCCCCCCC00000000CCCCCCCCCCCFFF0CCCCCCCCC00000000"
+rv = fhexout hFile "CCCCCCCCCCCFFF0CCCCCCCCC00000077CCCCCCCCCCCFFF0CCCCCCCCC77000077CCCCCCCCCCCFFF0CCCCCCCCC77000088CCCCCCCCCCCFFF0CCCCCCCCC88000088"
+rv = fhexout hFile "CCCCCCCCCCCFFF0CCCCCCCCC8800008FCCCCCCCCCCCFFF0CCCCCCCCCF800008FCCCCCCCCCCCFFF0CCCCCCCCCF800008FCCCCCCCCCCC8F8CCCCCCCCCCF8000088"
+rv = fhexout hFile "CCCCCCCCCCCCCCCCCCCCCCCC88000077CCCCCCCCCCCC000CCCCCCCCC770000000CCCCCCCCCCFFF0CCCCCCCC00000000000CCCCCCCCC8F8CCCCCCCC0000000000"
+rv = fhexout hFile "000CCCCCCCCCCCCCCCCCC000000000000000CCCCCCCCCCCCCCCC00000000000000000CCCCCCCCCCCCCC0000000000000000000CCCCCCCCCCCC00000000000000"
+rv = fhexout hFile "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000FFFF"
+rv = fhexout hFile "FFFFFFFFFFFFFF8001FFFF0000FFFE00007FFC00003FF800001FF000000FE0000007C0000003C0000003C0000003C0000003C0000003C0000003C0000003C000"
+rv = fhexout hFile "0003C0000003C0000003C0000003C0000003C0000003C0000003E0000007F000000FF800001FFC00003FFE00007FFF0000FFFF8001FFFFFFFFFFFFFFFFFF"
+
+    rv = fclose hFile
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+    run "makeit.bat"
+
+    end
+
+
+
+
+
+
+
+
+
+
+

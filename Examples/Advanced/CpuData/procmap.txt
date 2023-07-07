@@ -1,0 +1,7 @@
+
+; source file = cpudata.asm
+        ; Procedure name = entry_point
+        ; Procedure name = main
+        ; Procedure name = msgloop
+        ; Procedure name = WndProc
+        ; Procedure name = display_string

@@ -1,0 +1,9 @@
+
+; source file = enum.asm
+        ; Procedure name = entry_point
+        ; Procedure name = main
+        ; Procedure name = msgloop
+        ; Procedure name = WndProc
+        ; Procedure name = listbox
+        ; Procedure name = ListProc
+        ; Procedure name = EnmProc

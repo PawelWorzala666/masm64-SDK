@@ -1,0 +1,49 @@
+
+; source file = about.asm
+        ; Procedure name = AboutDlg
+
+; source file = algorithms.asm
+        ; Procedure name = right_indent
+        ; Procedure name = left_indent
+        ; Procedure name = indent_select
+        ; Procedure name = is_text_selected
+
+; source file = fileio.asm
+        ; Procedure name = LoadFileThread
+        ; Procedure name = SaveFileThread
+        ; Procedure name = stream_file_in
+        ; Procedure name = cb_Open_File
+        ; Procedure name = stream_file_out
+        ; Procedure name = cb_Save_File
+        ; Procedure name = confirmation
+
+; source file = richedit.asm
+        ; Procedure name = rich_edit
+        ; Procedure name = set_text_colour
+        ; Procedure name = set_edit_colours
+        ; Procedure name = select_all
+        ; Procedure name = is_selected
+        ; Procedure name = set_lcase
+        ; Procedure name = set_ucase
+        ; Procedure name = get_current_line_index
+        ; Procedure name = tab_replace
+
+; source file = search.asm
+        ; Procedure name = replace_text
+        ; Procedure name = FndEdProc1
+        ; Procedure name = RepEdProc
+        ; Procedure name = find_text
+        ; Procedure name = FndEdProc
+        ; Procedure name = TextFind
+
+; source file = tEdit.asm
+        ; Procedure name = entry_point
+        ; Procedure name = main
+        ; Procedure name = msgloop
+        ; Procedure name = WndProc
+
+; source file = toolbar.asm
+        ; Procedure name = TBcreate
+        ; Procedure name = StatusBar
+        ; Procedure name = rebar
+        ; Procedure name = addband

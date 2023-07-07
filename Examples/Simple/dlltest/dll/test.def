@@ -1,0 +1,3 @@
+LIBRARY test
+ EXPORTS TestMsgBox @1
+ EXPORTS DLLlower @2

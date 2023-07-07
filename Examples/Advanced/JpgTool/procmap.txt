@@ -1,0 +1,32 @@
+
+; source file = dlgcode.asm
+        ; Procedure name = About
+        ; Procedure name = jpgdlg
+        ; Procedure name = jEdit1Proc
+        ; Procedure name = jEdit2Proc
+        ; Procedure name = ScaleDlg
+        ; Procedure name = Text1Proc
+        ; Procedure name = Text2Proc
+
+; source file = fileio.asm
+        ; Procedure name = load_disk_image
+        ; Procedure name = save_JPG_image
+        ; Procedure name = saved_image_size
+
+; source file = JpgTool.asm
+        ; Procedure name = entry_point
+        ; Procedure name = main
+        ; Procedure name = msgloop
+        ; Procedure name = WndProc
+        ; Procedure name = no_file_loaded
+        ; Procedure name = FixExtension
+        ; Procedure name = paste_clipboard_image
+        ; Procedure name = paste_image
+        ; Procedure name = keydown
+        ; Procedure name = keyup
+
+; source file = tbsbcode.asm
+        ; Procedure name = TBcreate
+        ; Procedure name = rebar
+        ; Procedure name = addband
+        ; Procedure name = StatusBar

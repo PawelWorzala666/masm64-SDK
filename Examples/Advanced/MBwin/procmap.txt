@@ -1,0 +1,10 @@
+
+; source file = MBwin.asm
+        ; Procedure name = entry_point
+        ; Procedure name = main
+        ; Procedure name = msgloop
+        ; Procedure name = WndProc
+        ; Procedure name = image_control
+        ; Procedure name = static_control
+        ; Procedure name = bmp_button
+        ; Procedure name = ButnProc

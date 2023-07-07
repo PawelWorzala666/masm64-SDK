@@ -1,0 +1,6 @@
+
+; source file = bmpbtns.asm
+        ; Procedure name = entry_point
+        ; Procedure name = main
+        ; Procedure name = setup_button
+        ; Procedure name = butnProc

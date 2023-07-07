@@ -1,0 +1,8 @@
+
+; source file = pTimer.asm
+        ; Procedure name = entry_point
+        ; Procedure name = main
+        ; Procedure name = msgloop
+        ; Procedure name = WndProc
+        ; Procedure name = Static_Control
+        ; Procedure name = RemoteThread

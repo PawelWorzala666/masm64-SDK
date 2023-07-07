@@ -1,0 +1,14 @@
+
+; source file = sidebar.asm
+        ; Procedure name = entry_point
+        ; Procedure name = main
+        ; Procedure name = msgloop
+        ; Procedure name = WndProc
+        ; Procedure name = TBcreate
+        ; Procedure name = rich_edit
+        ; Procedure name = StatusBar
+        ; Procedure name = AboutDlg
+        ; Procedure name = rebar
+        ; Procedure name = addband
+        ; Procedure name = set_text_colour
+        ; Procedure name = set_edit_colours

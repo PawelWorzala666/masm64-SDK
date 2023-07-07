@@ -1,0 +1,10 @@
+
+; source file = OneShotTimer.asm
+        ; Procedure name = entry_point
+        ; Procedure name = main
+        ; Procedure name = msgloop
+        ; Procedure name = WndProc
+        ; Procedure name = icon_control
+        ; Procedure name = bmp_button
+        ; Procedure name = ButnProc
+        ; Procedure name = Thread

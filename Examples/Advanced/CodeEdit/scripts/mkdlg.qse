@@ -1,0 +1,264 @@
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+    INTEGER hFile
+    INTEGER rv
+    STRING  projname$
+    STRING  filename$
+    STRING  projpath$
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+  ; ---------------------
+  ; set the target folder
+  ; ---------------------
+    projpath$ = getfolder "Set your target folder" "Create your dialog here"
+    if$ projpath$ = ""
+    end
+    chdir projpath$                     ; change to your target directory
+
+  ; --------------------
+  ; set the project name
+  ; --------------------
+    gettext "Type the project name with NO extension" "Do NOT use spaces in the name" "project"
+    if$ $0 = ""
+    end
+    projname$ = $0                      ; assign the gettext return string to a named variable string
+    filename$ = cat$ projname$ ".asm"   ; append the ASM extension to it
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+  ; K:\asm64_tools\dlgmake\default\dlgs.rc
+
+    hFile = fcreate "dlgs.rc"
+
+    rv = fprint hFile "#define IDD_DLG1 100"
+    rv = fprint hFile "#define IDC_BTN1 101"
+    rv = fprint hFile "#define IDC_IMG1 102"
+    rv = fprint hFile ""
+    rv = fprintc hFile "10 ICON DISCARDABLE \qicon.ico\q\r\n"
+    rv = fprint hFile ""
+    rv = fprint hFile "IDD_DLG1 DIALOGEX 10,10,250,114"
+    rv = fprintc hFile "CAPTION \qIDD_DLG\q\r\n"
+    rv = fprintc hFile "FONT 8,\qMS Sans Serif\q,0,0,0\r\n"
+    rv = fprint hFile "STYLE WS_POPUP|WS_VISIBLE|WS_CAPTION|WS_SYSMENU|DS_CENTER"
+    rv = fprint hFile "BEGIN"
+    rv = fprintc hFile "  CONTROL \qOK\q,IDC_BTN1,\qButton\q,WS_CHILDWINDOW|WS_VISIBLE|WS_TABSTOP,158,82,74,16\r\n"
+    rv = fprintc hFile "  CONTROL \q\q,IDC_IMG1,\qStatic\q,WS_CHILDWINDOW|WS_VISIBLE|SS_CENTERIMAGE|SS_ICON,20,16,36,32\r\n"
+    rv = fprint hFile "END"
+
+    rv = fclose hFile
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+  ; K:\asm64_tools\dlgmake\default\makeit.bat
+
+    hFile = fcreate "makeit.bat"
+
+    rv = fprint hFile "@echo off"
+    rv = fprint hFile ""
+
+    $0 = cat$ "set appname=" projname$
+    rv = fprint hFile $0
+
+    rv = fprint hFile ""
+    rv = fprint hFile "del %appname%.obj"
+    rv = fprint hFile "del %appname%.exe"
+    rv = fprint hFile ""
+    rv = fprint hFile "\masm64\bin64\porc64.exe rsrc.rc"
+    rv = fprint hFile ""
+    rv = fprint hFile "\masm64\bin64\ml64.exe /c /nologo %appname%.asm"
+    rv = fprint hFile ""
+    rv = fprint hFile "\masm64\bin64\Polink.exe /SUBSYSTEM:WINDOWS /ENTRY:entry_point /nologo /LARGEADDRESSAWARE %appname%.obj rsrc.res"
+    rv = fprint hFile ""
+    rv = fprint hFile "dir %appname%.*"
+    rv = fprint hFile ""
+    rv = fprint hFile "pause"
+
+    rv = fclose hFile
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+  ; K:\asm64_tools\dlgmake\default\manifest.xml
+
+    hFile = fcreate "manifest.xml"
+
+    rv = fprintc hFile "<?xml version=\q1.0\q encoding=\qUTF-8\q standalone=\qyes\q?><assembly xmlns=\qurn:schemas-microsoft-com:asm.v1\q manifestVersion=\q1.0\q>\r\n"
+    rv = fprint hFile "<assemblyIdentity "
+    rv = fprintc hFile "version=\q1.0.0.0\q \r\n"
+    rv = fprintc hFile "processorArchitecture=\qamd64\q \r\n"
+    rv = fprintc hFile "name=\qMASM32.Dialog Template.basedlg\q \r\n"
+    rv = fprintc hFile "type=\qwin32\q \r\n"
+    rv = fprint hFile "/> "
+    rv = fprint hFile "<description>Your application description here.</description> "
+    rv = fprint hFile "<dependency> "
+    rv = fprint hFile "<dependentAssembly> "
+    rv = fprint hFile "<assemblyIdentity "
+    rv = fprintc hFile "type=\qwin32\q \r\n"
+    rv = fprintc hFile "name=\qMicrosoft.Windows.Common-Controls\q \r\n"
+    rv = fprintc hFile "version=\q6.0.0.0\q \r\n"
+    rv = fprintc hFile "processorArchitecture=\qamd64\q \r\n"
+    rv = fprintc hFile "publicKeyToken=\q6595b64144ccf1df\q \r\n"
+    rv = fprintc hFile "language=\q*\q \r\n"
+    rv = fprint hFile "/> "
+    rv = fprint hFile "</dependentAssembly> "
+    rv = fprint hFile "</dependency> </assembly>"
+
+    rv = fclose hFile
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+  ; K:\asm64_tools\dlgmake\default\project.asm
+
+    hFile = fcreate filename$
+
+    rv = fprint hFile "; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい"
+    rv = fprint hFile ""
+    rv = fprint hFile "    include \masm64\include64\masm64rt.inc"
+    rv = fprint hFile ""
+    rv = fprint hFile "    .data?"
+    rv = fprint hFile "      hInstance dq ?"
+    rv = fprint hFile "      hIcon     dq ?"
+    rv = fprint hFile ""
+    rv = fprint hFile "    .code"
+    rv = fprint hFile ""
+    rv = fprint hFile "; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい"
+    rv = fprint hFile ""
+    rv = fprint hFile "entry_point proc"
+    rv = fprint hFile ""
+    rv = fprint hFile "  ; -----------------------"
+    rv = fprint hFile "  ; get the instance handle"
+    rv = fprint hFile "  ; -----------------------"
+    rv = fprint hFile "    mov hInstance, rvcall(GetModuleHandle,0)"
+    rv = fprint hFile ""
+    rv = fprint hFile "  ; -------------------------------------------------------------"
+    rv = fprint hFile "  ; set the icon loaded size here to match the original icon size"
+    rv = fprint hFile "  ; -------------------------------------------------------------"
+    rv = fprint hFile "    mov hIcon, rv(LoadImage,hInstance,10,IMAGE_ICON,32,32,LR_DEFAULTCOLOR)"
+    rv = fprint hFile ""
+    rv = fprint hFile "  ; ---------------------"
+    rv = fprint hFile "  ; create a modal dialog"
+    rv = fprint hFile "  ; ---------------------"
+    rv = fprint hFile "    invoke DialogBoxParam,hInstance,100,0,ADDR main,hIcon"
+    rv = fprint hFile ""
+    rv = fprint hFile "  ; --------------------------------"
+    rv = fprint hFile "  ; terminate app when dialog closes"
+    rv = fprint hFile "  ; --------------------------------"
+    rv = fprint hFile "    rcall ExitProcess,0"
+    rv = fprint hFile ""
+    rv = fprint hFile "    ret"
+    rv = fprint hFile ""
+    rv = fprint hFile "entry_point endp"
+    rv = fprint hFile ""
+    rv = fprint hFile "; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい"
+    rv = fprint hFile ""
+    rv = fprint hFile "main proc hWin:QWORD,uMsg:QWORD,wParam:QWORD,lParam:QWORD"
+    rv = fprint hFile ""
+    rv = fprint hFile "    .switch uMsg"
+    rv = fprint hFile "      .case WM_INITDIALOG"
+    rv = fprint hFile "      ; ------------------------------------------------------"
+    rv = fprint hFile "      ; lParam is the icon handle passed from DialogBoxParam()"
+    rv = fprint hFile "      ; ------------------------------------------------------"
+    rv = fprint hFile "        rcall SendMessage,hWin,WM_SETICON,1,lParam          ; set the icon for the dialog"
+    rv = fprint hFile "        rcall SendMessage,rvcall(GetDlgItem,hWin,102), \    ; set the icon in the client area"
+    rv = fprint hFile "               STM_SETIMAGE,IMAGE_ICON,lParam"
+    rv = fprintc hFile "        rcall SetWindowText,hWin,\qBase Dialog\q\r\n"
+    rv = fprint hFile "      ; ----------------------------------------------------"
+    rv = fprint hFile "      ; set the focus to the first control by returning TRUE"
+    rv = fprint hFile "      ; ----------------------------------------------------"
+    rv = fprint hFile "        .return TRUE"
+    rv = fprint hFile ""
+    rv = fprint hFile "      .case WM_COMMAND"
+    rv = fprint hFile "        .switch wParam"
+    rv = fprint hFile "          .case 101"
+    rv = fprint hFile "            jmp exit_dialog             ; The OK button"
+    rv = fprint hFile "        .endsw"
+    rv = fprint hFile ""
+    rv = fprint hFile "      .case WM_CLOSE"
+    rv = fprint hFile "        exit_dialog:"
+    rv = fprint hFile "        rcall EndDialog,hWin,0         ; exit from system menu"
+    rv = fprint hFile "    .endsw"
+    rv = fprint hFile ""
+    rv = fprint hFile "    xor rax, rax"
+    rv = fprint hFile "    ret"
+    rv = fprint hFile ""
+    rv = fprint hFile "main endp"
+    rv = fprint hFile ""
+    rv = fprint hFile "; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい"
+    rv = fprint hFile ""
+    rv = fprint hFile "    end"
+
+    rv = fclose hFile
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+  ; K:\asm64_tools\dlgmake\default\rsrc.rc
+
+    hFile = fcreate "rsrc.rc"
+
+    rv = fprint hFile "// *************************************************************************************************"
+    rv = fprint hFile ""
+    rv = fprintc hFile "#include \q\\masm64\\include64\\resource.h\q\r\n"
+    rv = fprint hFile ""
+    rv = fprint hFile "// *************************************************************************************************"
+    rv = fprint hFile ""
+    rv = fprintc hFile "1 24 \qmanifest.xml\q    // manifest file\r\n"
+    rv = fprint hFile ""
+    rv = fprintc hFile "#include \qdlgs.rc\q\r\n"
+    rv = fprint hFile ""
+    rv = fprint hFile "// *************************************************************************************************"
+    rv = fprint hFile ""
+    rv = fprint hFile "VS_VERSION_INFO VERSIONINFO"
+    rv = fprint hFile "FILEVERSION 1, 0, 0, 0"
+    rv = fprint hFile "PRODUCTVERSION 1, 0, 0, 0"
+    rv = fprint hFile "FILEOS VOS__WINDOWS32"
+    rv = fprint hFile "FILETYPE VFT_APP"
+    rv = fprint hFile "BEGIN"
+    rv = fprintc hFile "  BLOCK \qStringFileInfo\q\r\n"
+    rv = fprint hFile "  BEGIN"
+    rv = fprintc hFile "    BLOCK \q040904B0\q\r\n"
+    rv = fprint hFile "    BEGIN"
+    rv = fprintc hFile "      VALUE \qCompanyName\q,      \qThe MASM32 SDK\\000\q\r\n"
+    rv = fprintc hFile "      VALUE \qFileDescription\q,  \qBase Dialog Template\\000\q\r\n"
+    rv = fprintc hFile "      VALUE \qFileVersion\q,      \q1.0\\000\q\r\n"
+    rv = fprintc hFile "      VALUE \qInternalName\q,     \qbasedlg\\000\q\r\n"
+    rv = fprintc hFile "      VALUE \qOriginalFilename\q, \qbasedlg.exe\\000\q\r\n"
+    rv = fprintc hFile "      VALUE \qLegalCopyright\q,   \q\\251 2016 The MASM32 SDK\\000\q\r\n"
+    rv = fprintc hFile "      VALUE \qProductName\q,      \qbasedlg\\000\q\r\n"
+    rv = fprintc hFile "      VALUE \qProductVersion\q,   \q1.0\\000\q\r\n"
+    rv = fprint hFile "    END"
+    rv = fprint hFile "  END"
+    rv = fprintc hFile "  BLOCK \qVarFileInfo\q\r\n"
+    rv = fprint hFile "  BEGIN"
+    rv = fprintc hFile "    VALUE \qTranslation\q, 0x409, 0x4B0\r\n"
+    rv = fprint hFile "  END"
+    rv = fprint hFile "END"
+    rv = fprint hFile ""
+    rv = fprint hFile "// *************************************************************************************************"
+
+    rv = fclose hFile
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+    hFile = fcreate "icon.ico"
+
+    rv = fhexout hFile "0000010001002020100001000400E802000016000000280000002000000040000000010004000000000000020000000000000000000000000000000000000000"
+    rv = fhexout hFile "000000008000008000000080800080000000800080008080000080808000C0C0C0000000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF000000"
+    rv = fhexout hFile "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    rv = fhexout hFile "000000CCCCCCCCCCCC0000000000000000000CCCCCCCCCCCCCC00000000000000000CCCCCCCCCCCCCCCC000000000000000CCCCCCCCCCCCCCCCCC00000000000"
+    rv = fhexout hFile "00CCCCCCCCCCCCCCCCCCCC00000000000CCCCCCCCCCC000CCCCCCCC000000000CCCCCCCCCCC8F80CCCCCCCCC00000000CCCCCCCCCCCFFF0CCCCCCCCC00000000"
+    rv = fhexout hFile "CCCCCCCCCCCFFF0CCCCCCCCC00000077CCCCCCCCCCCFFF0CCCCCCCCC77000077CCCCCCCCCCCFFF0CCCCCCCCC77000088CCCCCCCCCCCFFF0CCCCCCCCC88000088"
+    rv = fhexout hFile "CCCCCCCCCCCFFF0CCCCCCCCC8800008FCCCCCCCCCCCFFF0CCCCCCCCCF800008FCCCCCCCCCCCFFF0CCCCCCCCCF800008FCCCCCCCCCCC8F8CCCCCCCCCCF8000088"
+    rv = fhexout hFile "CCCCCCCCCCCCCCCCCCCCCCCC88000077CCCCCCCCCCCC000CCCCCCCCC770000000CCCCCCCCCCFFF0CCCCCCCC00000000000CCCCCCCCC8F8CCCCCCCC0000000000"
+    rv = fhexout hFile "000CCCCCCCCCCCCCCCCCC000000000000000CCCCCCCCCCCCCCCC00000000000000000CCCCCCCCCCCCCC0000000000000000000CCCCCCCCCCCC00000000000000"
+    rv = fhexout hFile "0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000FFFF"
+    rv = fhexout hFile "FFFFFFFFFFFFFF8001FFFF0000FFFE00007FFC00003FF800001FF000000FE0000007C0000003C0000003C0000003C0000003C0000003C0000003C0000003C000"
+    rv = fhexout hFile "0003C0000003C0000003C0000003C0000003C0000003C0000003E0000007F000000FF800001FFC00003FFE00007FFF0000FFFF8001FFFFFFFFFFFFFFFFFF"
+
+    rv = fclose hFile
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+    run "makeit.bat"
+
+    end
+

@@ -1,0 +1,87 @@
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+    INTEGER hFile
+    INTEGER rv
+    STRING  projname$
+    STRING  filename$
+    STRING  projpath$
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+  ; ---------------------
+  ; set the target folder
+  ; ---------------------
+    projpath$ = getfolder "Set or create a target folder" "Create your CONSOLE template here"
+    if$ projpath$ = ""
+    end
+    chdir projpath$                     ; change to your target directory
+
+  ; --------------------
+  ; set the project name
+  ; --------------------
+    gettext "Type the project name with NO extension" "Do NOT use spaces in the name" "project"
+    if$ $0 = ""
+    end
+    projname$ = $0                      ; assign the gettext return string to a named variable string
+    filename$ = cat$ projname$ ".asm"   ; append the ASM extension to it
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+    hFile = fcreate filename$
+
+    rv = fprint hFile "; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい"
+    rv = fprint hFile ""
+    rv = fprint hFile "    include \masm64\include64\masm64rt.inc"
+    rv = fprint hFile ""
+    rv = fprint hFile "    .code"
+    rv = fprint hFile ""
+    rv = fprint hFile "; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい"
+    rv = fprint hFile ""
+    rv = fprint hFile "entry_point proc"
+    rv = fprint hFile ""
+    rv = fprint hFile "    USING r12,r13,r14,r15"
+    rv = fprint hFile ""
+    rv = fprint hFile "    SaveRegs"
+    rv = fprint hFile ""
+    rv = fprintc hFile "    rcall MessageBox,0,\qMASM64 Pure and Simple\q,\q UI Template\q,MB_OK\r\n"
+    rv = fprint hFile ""
+    rv = fprint hFile "    RestoreRegs"
+    rv = fprint hFile ""
+    rv = fprint hFile "    .exit"
+    rv = fprint hFile ""
+    rv = fprint hFile "entry_point endp"
+    rv = fprint hFile ""
+    rv = fprint hFile "; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい"
+    rv = fprint hFile ""
+    rv = fprint hFile "    end"
+    rv = fclose hFile
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+    hFile = fcreate "makeit.bat"
+
+    rv = fprint hFile "@echo off"
+    rv = fprint hFile ""
+
+    $0 = cat$ "set appname=" projname$
+    rv = fprint hFile $0
+
+    rv = fprint hFile ""
+    rv = fprint hFile "if exist %appname%.obj del %appname%.obj"
+    rv = fprint hFile "if exist %appname%.exe del %appname%.exe"
+    rv = fprint hFile ""
+    rv = fprint hFile "\masm64\bin64\ml64.exe /c %appname%.asm"
+    rv = fprint hFile ""
+    rv = fprint hFile "\masm64\bin64\polink.exe /SUBSYSTEM:WINDOWS /MACHINE:X64 /ENTRY:entry_point /nologo /LARGEADDRESSAWARE %appname%.obj"
+    rv = fprint hFile ""
+    rv = fprint hFile "dir %appname%.*"
+    rv = fprint hFile ""
+    rv = fprint hFile "pause"
+
+    rv = fclose hFile
+
+; いいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいいい
+
+    run "makeit.bat"
+
+    end

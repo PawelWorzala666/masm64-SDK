@@ -1,0 +1,23 @@
+#define IDD_DLG1 1000
+#define IDC_BTN1 1001
+#define IDC_IMG1 1002
+#define IDC_STC1 1003
+#define IDC_STC2 1004
+#define IDC_STC3 1005
+
+#include "/masm64/include64/resource.h"
+
+10 ICON DISCARDABLE "icon.ico"
+
+IDD_DLG1 DIALOGEX 10,10,184,98
+CAPTION "Plugin Power"
+FONT 11,"Segoe UI Semibold",600,0,0
+STYLE WS_VISIBLE|WS_CAPTION|WS_SYSMENU|DS_CENTER
+BEGIN
+  CONTROL "OK",IDC_BTN1,"Button",WS_CHILDWINDOW|WS_VISIBLE|WS_TABSTOP,138,78,36,11
+  CONTROL "",IDC_IMG1,"Static",WS_CHILDWINDOW|WS_VISIBLE|SS_CENTERIMAGE|SS_ICON,8,10,36,28
+  CONTROL "Any dialog you like with full access to any of the handles in CodeEdit",IDC_STC1,"Static",WS_CHILDWINDOW|WS_VISIBLE,50,4,118,16
+  CONTROL "Wickedly crafted in 64 Bit Microsoft Assembler <MASM>",IDC_STC2,"Static",WS_CHILDWINDOW|WS_VISIBLE,6,64,176,10
+  CONTROL "A DLL designed for user configuration with the capacity  to add  menus, dialogs and algorithms to extend CodeEdit to the user's own preference",IDC_STC3,"Static",WS_CHILDWINDOW|WS_VISIBLE,50,26,122,38
+END
+

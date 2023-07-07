@@ -1,0 +1,7 @@
+
+; source file = gdipload.asm
+        ; Procedure name = entry_point
+        ; Procedure name = main
+        ; Procedure name = msgloop
+        ; Procedure name = WndProc
+        ; Procedure name = ImageCtl
